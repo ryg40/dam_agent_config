@@ -29,8 +29,8 @@ agent:
   name: planner
   enabled: true
   outputs:
-    - PLAN.md
-    - STATE.md
+    - agent-docs/PLAN.md
+    - agent-docs/STATE.md
 ```
 
 #### Responsibilities
@@ -60,8 +60,11 @@ agent:
   name: executor
   enabled: true
   inputs:
-    - PLAN.md
-    - STATE.md
+    - agent-docs/PLAN.md
+    - agent-docs/STATE.md
+  outputs:
+    - agent-docs/PLAN.md
+    - agent-docs/STATE.md
   commit_style: atomic
 ```
 
@@ -95,6 +98,8 @@ agent:
     - code_quality
     - test_coverage
     - documentation_sync
+  outputs:
+    - agent-docs/STATE.md
 ```
 
 #### Responsibilities
@@ -128,8 +133,9 @@ agent:
     - git_status
     - recent_commits
   outputs:
-    - STATE.md
-    - CHANGELOG.md
+    - agent-docs/STATE.md
+    - agent-docs/PLAN.md
+    - agent-docs/CHANGELOG.md
 ```
 
 #### Responsibilities
@@ -144,11 +150,22 @@ agent:
 
 ## State Files
 
+**IMPORTANT**: All state files live in `/agent-docs/` so all agent frameworks can access them.
+
+```
+agent-docs/
+  STATE.md      - Current phase, in-progress work, blockers
+  PLAN.md       - Task breakdown with checkboxes
+  CHANGELOG.md  - Human-readable change log
+```
+
 | File | Purpose |
 |------|---------|
-| `STATE.md` | Current work state, tasks in progress, blockers |
-| `PLAN.md` | Task breakdown with dependencies and status |
-| `CHANGELOG.md` | Human-readable change history |
+| `agent-docs/STATE.md` | Current work state, tasks in progress, blockers |
+| `agent-docs/PLAN.md` | Task breakdown with dependencies and status |
+| `agent-docs/CHANGELOG.md` | Human-readable change history |
+
+**Every agent must update `/agent-docs/` after every action.**
 
 ## Workflow
 
@@ -212,6 +229,11 @@ Commands are available across multiple AI coding tools:
     execute.prompt.md
     review.prompt.md
     document.prompt.md
+
+agent-docs/             # Shared state (all tools read/write here)
+  STATE.md
+  PLAN.md
+  CHANGELOG.md
 ```
 
 ### Usage by Tool

@@ -56,11 +56,16 @@ Run `/document` frequently to keep STATE.md accurate.
 
 ## State Files
 
-When working on a project, these files track state:
+**IMPORTANT**: All state files live in `/agent-docs/` so all agent frameworks can access them.
 
-- **STATE.md** - Current phase, in-progress work, blockers
-- **PLAN.md** - Task breakdown with checkboxes
-- **CHANGELOG.md** - Human-readable change log
+```
+agent-docs/
+  STATE.md      - Current phase, in-progress work, blockers
+  PLAN.md       - Task breakdown with checkboxes
+  CHANGELOG.md  - Human-readable change log
+```
+
+**Every command must update `/agent-docs/` after every action.**
 
 ## Commit Style
 

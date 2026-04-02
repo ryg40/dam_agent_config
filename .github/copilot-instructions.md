@@ -20,9 +20,16 @@ This repository uses a lightweight, human-driven workflow system.
 
 ## State Files
 
-- **STATE.md** - Current phase, in-progress work, blockers
-- **PLAN.md** - Task breakdown with checkboxes
-- **CHANGELOG.md** - Human-readable change log
+**IMPORTANT**: All state files live in `/agent-docs/` so all agent frameworks can access them.
+
+```
+agent-docs/
+  STATE.md      - Current phase, in-progress work, blockers
+  PLAN.md       - Task breakdown with checkboxes
+  CHANGELOG.md  - Human-readable change log
+```
+
+**Every command must update `/agent-docs/` after every action.**
 
 ## Commit Style
 
