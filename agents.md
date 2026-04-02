@@ -180,6 +180,48 @@ Human: Reviews, continues or adjusts
 | `/review` | Review current changes |
 | `/document` | Scan diffs, update state |
 
+## Tool Compatibility
+
+Commands are available across multiple AI coding tools:
+
+| Tool | Command Location | Format |
+|------|------------------|--------|
+| **Claude Code** | `.claude/commands/*.md` | Markdown with `$ARGUMENTS` |
+| **OpenCode** | `.opencode/commands/*.md` | Markdown with YAML frontmatter |
+| **Copilot Chat** | `.github/prompts/*.prompt.md` | Markdown with YAML frontmatter |
+
+### Directory Structure
+
+```
+.claude/commands/       # Claude Code
+  plan.md
+  execute.md
+  review.md
+  document.md
+
+.opencode/commands/     # OpenCode
+  plan.md
+  execute.md
+  review.md
+  document.md
+
+.github/
+  copilot-instructions.md   # Copilot general instructions
+  prompts/                  # Copilot prompt files
+    plan.prompt.md
+    execute.prompt.md
+    review.prompt.md
+    document.prompt.md
+```
+
+### Usage by Tool
+
+| Tool | Invocation |
+|------|------------|
+| Claude Code | Type `/plan`, `/execute`, `/review`, `/document` |
+| OpenCode | Type `/plan`, `/execute`, `/review`, `/document` |
+| Copilot Chat | Type `/plan`, `/execute`, `/review`, `/document` |
+
 ## Agent Statuses
 
 - **Enabled** - Agent is active and available

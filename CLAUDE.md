@@ -16,17 +16,24 @@ A lightweight, human-driven workflow system inspired by [GSD](https://github.com
 ## Repository Structure
 
 ```
-.claude/commands/   - Slash commands for Claude Code
-  plan.md           - /plan - Create task plans
-  execute.md        - /execute - Implement tasks
-  review.md         - /review - Review changes
-  document.md       - /document - Sync state with reality
-templates/          - Templates for state files
-agents.md           - Agent definitions and workflow docs
-STATE.md            - Current work state (created per-project)
-PLAN.md             - Task breakdown (created per-project)
-CHANGELOG.md        - Change history (created per-project)
+.claude/commands/       - Claude Code slash commands
+.opencode/commands/     - OpenCode slash commands
+.github/
+  copilot-instructions.md  - Copilot general instructions
+  prompts/              - Copilot prompt files
+templates/              - Templates for state files
+agents.md               - Agent definitions and docs
+STATE.md                - Current work state (per-project)
+PLAN.md                 - Task breakdown (per-project)
+CHANGELOG.md            - Change history (per-project)
 ```
+
+## Tool Compatibility
+
+Commands work across:
+- **Claude Code**: `.claude/commands/*.md`
+- **OpenCode**: `.opencode/commands/*.md`  
+- **Copilot Chat**: `.github/prompts/*.prompt.md`
 
 ## Commands
 
