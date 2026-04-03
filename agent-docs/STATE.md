@@ -1,29 +1,34 @@
 # State
 
-**Phase**: idle
-**Updated**: 2026-04-02
+<!-- EFFICIENT READ: First 50 lines contain all actionable state -->
 
-## Current Focus
+**Phase**: idle | planning | executing | blocked | complete
+**Updated**: 2026-04-03 00:00
+**Progress**: 0/0
 
-No active work.
+## Focus
 
-## In Progress
+(none)
 
-- None
+## Blocked
 
-## Uncommitted Changes
+(none)
 
-- None
+## Next
 
-## Recent Commits
+Run `/plan <requirement>` to start.
 
-- None yet
+---
+<!-- CONTEXT BELOW: Read only when needed -->
 
-## Blockers
+## Decisions
 
-- None
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| - | - | - |
 
-## Next Steps
+## Session Log
 
-- Define requirements
-- Run `/plan` to create task breakdown
+| Date | Action | Outcome |
+|------|--------|---------|
+| 2026-04-03 | init | Created state files |

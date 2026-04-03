@@ -1,49 +1,41 @@
 ---
-description: Implement the next task from the plan with an atomic commit
+description: Implement next task with atomic commit
 mode: agent
 ---
 
 # Execute
 
-Implement the next task from the plan with an atomic commit.
+Implement next task with atomic commit.
 
-**IMPORTANT**: Always update `/agent-docs/` after every action.
+## Efficient Reads
 
-## Instructions
+```bash
+head -50 agent-docs/STATE.md  # Quick context
+head -50 agent-docs/PLAN.md   # Active tasks only
+```
 
-1. Read `/agent-docs/PLAN.md` and `/agent-docs/STATE.md`
-2. Find the next uncompleted task (respect dependencies)
-3. If a specific task is mentioned, use that instead
-4. Implement the task
-5. Stage and commit with a clear message
-6. Mark the task complete in `/agent-docs/PLAN.md`
-7. Update `/agent-docs/STATE.md` with progress
+## Steps
 
-## Commit Message Format
+1. Read first 50 lines of STATE.md and PLAN.md
+2. Find next unchecked task (or use specified task)
+3. Implement the task
+4. Commit with message: `<type>: <description>`
+5. Move task from Active to Done in PLAN.md
+6. Update STATE.md header (progress, focus)
+
+## Commit Format
 
 ```
 <type>: <description>
 
-- What was done
-- Why it was done
-
-Task: <task name from plan>
+Task: <task name>
 ```
 
 Types: feat, fix, docs, refactor, test, chore
 
 ## Output
 
-- Implemented code changes
-- One atomic git commit
-- Updated `/agent-docs/PLAN.md` (task marked done)
-- Updated `/agent-docs/STATE.md` (progress updated, timestamp refreshed)
-
-If all tasks complete, set STATE.md phase to "complete".
-
-## Doc Update Checklist
-
-- [ ] Marked task complete in `/agent-docs/PLAN.md`
-- [ ] Updated phase in `/agent-docs/STATE.md`
-- [ ] Updated "Recent Commits" in STATE.md
-- [ ] Set timestamp in STATE.md
+- Code changes
+- One atomic commit
+- PLAN.md task moved to Done
+- STATE.md progress updated

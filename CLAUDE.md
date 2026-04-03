@@ -65,7 +65,18 @@ agent-docs/
   CHANGELOG.md  - Human-readable change log
 ```
 
-**Every command must update `/agent-docs/` after every action.**
+### Efficient Reads
+
+State files use a **header/history** structure:
+- **First 50 lines**: Actionable state (read this for quick context)
+- **Below the `---`**: History/logs (read only when debugging)
+
+```bash
+head -50 agent-docs/STATE.md  # Quick context
+head -50 agent-docs/PLAN.md   # Active tasks
+```
+
+This prevents context bloat as history grows.
 
 ## Commit Style
 

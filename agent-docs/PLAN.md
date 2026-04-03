@@ -1,22 +1,21 @@
 # Plan
 
+<!-- EFFICIENT READ: First 50 lines contain active work -->
+
 **Goal**: (none)
-**Created**: 2026-04-02
-**Status**: draft
+**Progress**: 0/0
 
-## Requirements
+## Active
 
-(No requirements defined yet)
+(none)
 
-## Tasks
+## Blocked
 
-(No tasks yet - run `/plan <requirement>` to create tasks)
+(none)
 
-## Completed
+---
+<!-- COMPLETED BELOW -->
 
-(Tasks move here when done)
+## Done
 
-## Notes
-
-- Each task should be atomic and result in one commit
-- Update STATE.md after completing each task
+(tasks move here)
