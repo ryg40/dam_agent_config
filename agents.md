@@ -33,6 +33,11 @@ agent:
     - agent-docs/STATE.md
 ```
 
+#### Routing
+
+**Use when:** Starting new work, complex requirements, large tasks
+**Skip when:** Task is trivial, plan already exists
+
 #### Responsibilities
 
 - Parse requirements into discrete tasks
@@ -68,6 +73,15 @@ agent:
   commit_style: atomic
 ```
 
+#### Routing
+
+**Use when:** Plan exists, task is well-scoped, ready to implement
+**Skip when:** No plan, task unclear, need to explore first
+
+#### Bounded Execution
+
+Assumes context is complete. Does not research or re-scope.
+
 #### Responsibilities
 
 - Pick next task from plan
@@ -101,6 +115,15 @@ agent:
   outputs:
     - agent-docs/STATE.md
 ```
+
+#### Routing
+
+**Use when:** After execute, before PR, spot-checking
+**Skip when:** No changes, just need state sync
+
+#### READ-ONLY
+
+Reports issues but does not fix them.
 
 #### Responsibilities
 
@@ -137,6 +160,15 @@ agent:
     - agent-docs/PLAN.md
     - agent-docs/CHANGELOG.md
 ```
+
+#### Routing
+
+**Use when:** Anytime, after manual changes, before handoff
+**Skip when:** About to execute (it updates state itself)
+
+#### CODE READ-ONLY
+
+Only updates `agent-docs/`. Does not modify code.
 
 #### Responsibilities
 
