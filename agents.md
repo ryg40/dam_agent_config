@@ -1,13 +1,8 @@
 # Agents
 
+Reference documentation for agent definitions. For actionable rules, see [AGENTS.md](AGENTS.md).
+
 A lightweight, human-driven workflow system inspired by [GSD](https://github.com/gsd-build/get-shit-done). Focused on documentation maintenance and atomic commits.
-
-## Philosophy
-
-- **Human-driven**: Humans orchestrate, agents assist
-- **Documentation-first**: State is always captured in markdown
-- **Atomic commits**: Each logical change is one commit
-- **Scan and sync**: Run `/document` anytime to capture drift
 
 ## Agent Definitions
 
@@ -255,27 +250,39 @@ Commands are available across multiple AI coding tools:
 ### Directory Structure
 
 ```
-.claude/commands/       # Claude Code
-  plan.md
-  execute.md
-  review.md
-  document.md
+AGENTS.md                   # Universal agent instructions (highest priority)
+CLAUDE.md                   # Claude Code specific instructions
+opencode.json               # OpenCode project config
 
-.opencode/commands/     # OpenCode
+.opencode/
+  agents/                   # OpenCode agent definitions (YAML frontmatter)
+    plan.md
+    execute.md
+    review.md
+    document.md
+  commands/                 # OpenCode slash commands
+    plan.md
+    execute.md
+    review.md
+    document.md
+  modes/                    # OpenCode modes (placeholder)
+  skills/                   # OpenCode skills (placeholder)
+
+.claude/commands/           # Claude Code slash commands
   plan.md
   execute.md
   review.md
   document.md
 
 .github/
-  copilot-instructions.md   # Copilot general instructions
+  copilot-instructions.md  # Copilot general instructions
   prompts/                  # Copilot prompt files
     plan.prompt.md
     execute.prompt.md
     review.prompt.md
     document.prompt.md
 
-agent-docs/             # Shared state (all tools read/write here)
+agent-docs/                 # Shared state (all tools read/write here)
   STATE.md
   PLAN.md
   CHANGELOG.md
