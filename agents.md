@@ -175,6 +175,95 @@ Only updates `agent-docs/`. Does not modify code.
 
 ---
 
+### OneOff
+
+| Property | Value |
+|----------|-------|
+| **Name** | oneoff |
+| **Description** | Standalone planner+executor for ad-hoc tasks |
+| **Status** | Enabled |
+| **Mode** | primary |
+
+Handles ad-hoc tasks outside the formal workflow. Plans and executes in a single pass. Delegates web research to the `learner` subagent via the `task` tool.
+
+#### Configuration
+
+```yaml
+agent:
+  name: oneoff
+  mode: primary
+  tools:
+    task: true
+    webfetch: false
+  permission:
+    edit: allow
+    bash: allow
+    webfetch: deny
+```
+
+#### Routing
+
+**Use when:** Quick fixes, one-off changes, exploratory spikes
+**Skip when:** Task needs formal planning (use `/plan` instead)
+
+#### Delegation
+
+Invokes `learner` subagent via the `task` tool for web research. Prompts to learner must be self-contained (learner has no conversation history).
+
+#### Responsibilities
+
+- Restate the request, plan briefly, execute
+- Delegate all web research to `learner`
+- Atomic commits, no state file updates
+
+---
+
+### Learner (subagent)
+
+| Property | Value |
+|----------|-------|
+| **Name** | learner |
+| **Description** | Research subagent returning compressed findings |
+| **Status** | Enabled |
+| **Mode** | subagent |
+
+Called by other agents (primarily `oneoff`) via the `task` tool. Performs web research and returns compressed, actionable findings (max 40 lines) to conserve the caller's context window.
+
+#### Configuration
+
+```yaml
+agent:
+  name: learner
+  mode: subagent
+  tools:
+    webfetch: true
+    read: true
+    edit: false
+    bash: false
+    task: false
+  permission:
+    edit: deny
+    bash: deny
+    webfetch: allow
+```
+
+#### Output Format
+
+Returns structured findings:
+- `## Research: <topic>` header
+- Bullet-point facts with source URLs
+- Code/config snippets when applicable
+- Gaps section for unconfirmed items
+
+#### Context Conservation
+
+- Max 40 lines output
+- No preamble, no opinions
+- Deduplicate across sources
+- Prefer code over prose
+
+---
+
 ## State Files
 
 **IMPORTANT**: All state files live in `/agent-docs/` so all agent frameworks can access them.

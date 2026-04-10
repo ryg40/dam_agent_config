@@ -46,6 +46,24 @@ State files use header/history structure:
 4. `/review` checks quality
 5. `/document` syncs state anytime
 
+## Standalone Agents
+
+### OneOff
+
+Ad-hoc planner+executor for tasks outside the formal workflow. Does not update `agent-docs/`.
+
+- Delegates all web research to `@learner` subagent
+- Does NOT use webfetch or web search directly
+- Keeps commits atomic
+
+### Learner (subagent)
+
+Research-only subagent called by other agents via `@learner`. Returns compressed findings (max 40 lines) to conserve caller's context.
+
+- READ-ONLY: no file edits, no bash
+- Returns structured findings with sources
+- Prefers code snippets over prose
+
 ## Commit Format
 
 ```
