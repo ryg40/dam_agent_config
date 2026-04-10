@@ -264,6 +264,61 @@ Returns structured findings:
 
 ---
 
+### AgentFixer
+
+| Property | Value |
+|----------|-------|
+| **Name** | agentfixer |
+| **Description** | Meta-agent that modifies agent instructions |
+| **Status** | Enabled |
+| **Mode** | primary |
+
+Knows exact file locations for all agent frameworks (OpenCode, Claude Code, Copilot). Modifies agent instructions following best practices.
+
+#### Configuration
+
+```yaml
+agent:
+  name: agentfixer
+  mode: primary
+  tools:
+    task: true
+    read: true
+    edit: true
+    glob: true
+    grep: true
+    bash: false
+    webfetch: false
+  permission:
+    edit: ask
+    bash: deny
+    webfetch: deny
+```
+
+#### File Location Knowledge
+
+| Framework | Agents | Commands/Prompts | Rules |
+|-----------|--------|------------------|-------|
+| OpenCode | `.opencode/agents/*.md` | `.opencode/commands/*.md` | `AGENTS.md` |
+| Claude Code | — | `.claude/commands/*.md` | `CLAUDE.md` |
+| Copilot | — | `.github/prompts/*.prompt.md` | `.github/copilot-instructions.md` |
+
+#### Context Gathering
+
+Prompts user for:
+- **Frequently accessed files** — paths to hardcode in agent instructions
+- **Regularly accessed URLs** — documentation references
+- **MCP servers and keywords** — server names and common commands
+
+#### Responsibilities
+
+- Read agent files before modifying
+- Apply best practices (YAML frontmatter, permissions, imperative rules)
+- Propose changes and wait for approval
+- Delegate research to `learner` when unsure about conventions
+
+---
+
 ## State Files
 
 **IMPORTANT**: All state files live in `/agent-docs/` so all agent frameworks can access them.

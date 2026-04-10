@@ -64,6 +64,15 @@ Research-only subagent called by other agents via `@learner`. Returns compressed
 - Returns structured findings with sources
 - Prefers code snippets over prose
 
+### AgentFixer
+
+Meta-agent that modifies agent instruction files across all frameworks (OpenCode, Claude Code, Copilot). Knows exact file locations.
+
+- Prompts for frequently accessed files, URLs, MCP servers, and keywords
+- Applies best practices: YAML frontmatter, permission backstops, imperative rules
+- MUST ask before editing any agent file
+- Delegates research to `learner` when unsure about conventions
+
 ## Commit Format
 
 ```
