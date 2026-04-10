@@ -1,18 +1,30 @@
 # Changelog
 
-All notable changes to this project.
+## 2026-04-10
 
-## [Unreleased]
+### OpenCode Compatibility & AGENTS.md
 
-### Added
+- Created `AGENTS.md` at repo root (universal agent instructions)
+- Added `.opencode/agents/` with YAML frontmatter agent definitions (plan, execute, review, document)
+- Added `.opencode/modes/` and `.opencode/skills/` directories
+- Added `opencode.json` project config
+- Reconciled `agents.md` as reference documentation, `AGENTS.md` as actionable rules
+- Updated `CLAUDE.md` to cross-reference `AGENTS.md`
+- Review agent: `edit: deny` (read-only enforced at config level)
+- Document agent: code read-only constraint
 
-- Initial agent workflow system
-- Cross-tool command support (Claude Code, OpenCode, Copilot)
+### Efficient Read Pattern
 
-### Changed
+- State files use header/history structure (first 50 lines = actionable)
+- Commands instruct `head -50` for quick context
+- Delegation routing: "Use when/Skip when" per command
+- Bounded execution: `/execute` assumes context complete
+- Parallel execution hints for independent operations
 
-- (none)
+## 2026-04-03
 
-### Fixed
+### Initial Setup
 
-- (none)
+- Created `agent-docs/` shared state directory
+- Created STATE.md, PLAN.md, CHANGELOG.md
+- Commands for Claude Code, OpenCode, and Copilot
