@@ -1,31 +1,23 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with this repository.
+Claude Code specific instructions. For universal rules all agents follow, see [AGENTS.md](AGENTS.md).
 
 ## Repository Purpose
 
-A lightweight, human-driven workflow system inspired by [GSD](https://github.com/gsd-build/get-shit-done). Focused on documentation maintenance and atomic commits.
-
-## Philosophy
-
-- **Human-driven**: Humans orchestrate, agents assist
-- **Documentation-first**: State is always captured in markdown
-- **Atomic commits**: Each logical change = one commit
-- **Scan and sync**: Run `/document` anytime to capture drift
+A lightweight, human-driven workflow system. Configuration/documentation repository. No build or test commands.
 
 ## Repository Structure
 
 ```
-.claude/commands/       - Claude Code slash commands
-.opencode/commands/     - OpenCode slash commands
-.github/
-  copilot-instructions.md  - Copilot general instructions
-  prompts/              - Copilot prompt files
-templates/              - Templates for state files
-agents.md               - Agent definitions and docs
-STATE.md                - Current work state (per-project)
-PLAN.md                 - Task breakdown (per-project)
-CHANGELOG.md            - Change history (per-project)
+AGENTS.md                   - Universal agent instructions
+CLAUDE.md                   - This file (Claude Code specific)
+opencode.json               - OpenCode project config
+agents.md                   - Agent reference documentation
+agent-docs/                 - Shared state files
+.opencode/agents/           - OpenCode agent definitions
+.opencode/commands/         - OpenCode slash commands
+.claude/commands/           - Claude Code slash commands
+.github/prompts/            - Copilot prompt files
 ```
 
 ## Tool Compatibility
@@ -89,10 +81,6 @@ Task: <task name from plan>
 ```
 
 Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
-
-## Development Commands
-
-This is a configuration/documentation repository. No build or test commands.
 
 ## Git Workflow
 
