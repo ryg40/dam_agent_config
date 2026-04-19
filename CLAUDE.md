@@ -1,78 +1,61 @@
 # CLAUDE.md
 
-Claude Code specific instructions. For universal rules all agents follow, see [AGENTS.md](AGENTS.md).
+Claude Code specific notes. Universal rules for all agents live in [AGENTS.md](AGENTS.md) — read that first.
 
-## Repository Purpose
+## Target Runtime
 
-A lightweight, human-driven workflow system. Configuration/documentation repository. No build or test commands.
+This repo's agent configuration is tuned for **small local models** served via llama-serve (typical pairing: two ~35B models loaded at Q8 with ~120k context). See AGENTS.md "Target Runtime" for the full list.
+
+Claude Code is supported too, but the defaults (short responses, aggressive delegation, tight envelopes) are calibrated for the local-model case. Claude Code will naturally be within budget.
+
+## Operating Notes for Small Models
+
+Apply these whether the backing model is Claude or a local 30–122B:
+
+1. **Delegate aggressively.** The orchestrator should never glob, grep, or read source files itself. That's `explorer`'s job.
+2. **Envelopes are mandatory.** Every subagent call uses the Task Envelope format from AGENTS.md. Refuse incomplete envelopes — don't guess.
+3. **Reasoning stays internal.** Do not stream chain-of-thought. Emit only tool calls and terse user-facing messages.
+4. **Budget output tokens.** Orchestrator messages ≤ 100 words; subagent returns ≤ 40 lines.
+5. **No restating.** Don't echo the user's request or narrate what you are about to do.
 
 ## Repository Structure
 
 ```
-AGENTS.md                   - Universal agent instructions
-CLAUDE.md                   - This file (Claude Code specific)
-opencode.json               - OpenCode project config
-agents.md                   - Agent reference documentation
-agent-docs/                 - Shared state files
-.opencode/agents/           - OpenCode agent definitions
-.opencode/commands/         - OpenCode slash commands
-.claude/commands/           - Claude Code slash commands
-.github/prompts/            - Copilot prompt files
+AGENTS.md                         Universal rules (primary source)
+CLAUDE.md                         This file
+agents.md                         Reference documentation
+opencode.json                     OpenCode project config
+agent-docs/                       Shared state
+.claude/agents/                   Subagent definitions (Claude Code)
+.claude/commands/                 Slash commands (Claude Code)
+.opencode/agents/                 Agent definitions (OpenCode)
+.opencode/commands/               Slash commands (OpenCode)
+.github/prompts/                  Copilot prompt files
+.github/copilot-instructions.md   Copilot rules
 ```
 
-## Tool Compatibility
+## Subagents
 
-Commands work across:
-- **Claude Code**: `.claude/commands/*.md`
-- **OpenCode**: `.opencode/commands/*.md`  
-- **Copilot Chat**: `.github/prompts/*.prompt.md`
+Claude Code's Task tool can invoke the subagents defined in `.claude/agents/`:
+
+| Subagent | Purpose | Tools |
+|----------|---------|-------|
+| `executor` | Implement one Task Envelope, commit | Read, Edit, Write, Bash |
+| `explorer` | Read-only code exploration, ≤40 line return | Read, Glob, Grep |
+| `learner` | Web research, ≤40 line return | WebFetch, WebSearch, Read |
+
+Invoke via the Task tool with `subagent_type` matching the filename.
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
-| `/plan <requirement>` | Break work into atomic tasks |
-| `/execute [task]` | Implement next task, atomic commit |
-| `/review` | Review current changes |
-| `/document` | Scan diffs, update STATE.md |
-
-## Workflow
-
-1. Human describes what they want
-2. `/plan` breaks it into tasks
-3. `/execute` implements one task at a time
-4. `/review` checks quality
-5. `/document` syncs state anytime
-
-Run `/document` frequently to keep STATE.md accurate.
-
-## State Files
-
-**IMPORTANT**: All state files live in `/agent-docs/` so all agent frameworks can access them.
-
-```
-agent-docs/
-  STATE.md      - Current phase, in-progress work, blockers
-  PLAN.md       - Task breakdown with checkboxes
-  CHANGELOG.md  - Human-readable change log
-```
-
-### Efficient Reads
-
-State files use a **header/history** structure:
-- **First 50 lines**: Actionable state (read this for quick context)
-- **Below the `---`**: History/logs (read only when debugging)
-
-```bash
-head -50 agent-docs/STATE.md  # Quick context
-head -50 agent-docs/PLAN.md   # Active tasks
-```
-
-This prevents context bloat as history grows.
+| `/plan <req>` | Orchestrator plans and delegates |
+| `/execute [task]` | Orchestrator delegates next task to `executor` |
+| `/review` | Read-only diff review |
+| `/document` | Sync `agent-docs/` to match git reality |
 
 ## Commit Style
-
-Each commit should be atomic and focused:
 
 ```
 <type>: <description>
@@ -80,10 +63,10 @@ Each commit should be atomic and focused:
 Task: <task name from plan>
 ```
 
-Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
+Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`.
 
 ## Git Workflow
 
-- Branch naming: `claude/` prefix for automated branches
-- Changes merged via pull requests
-- Atomic commits per completed task
+- Branch prefix `claude/` for automated branches
+- Atomic commits per task
+- Changes merged via PR
