@@ -1,77 +1,110 @@
 # AGENTS.md
 
-Project instructions for all AI coding agents.
+Universal instructions for all AI coding agents in this repo (Claude Code, OpenCode, Copilot).
 
-## Project
+## Target Runtime
 
-This is a configuration/documentation repository. No build or test commands. All changes are markdown files and config.
+This config is tuned for **small local models** served via llama-serve:
 
-## Rules
+- Dense: Gemma4-31B, Qwen3.5-27B (Q8, ~120k ctx)
+- MoE: Qwen3.6-35B-A3B, Qwen3.5-122B-A10B (Q8, ~120k ctx)
+- Typically **two models loaded simultaneously** — one orchestrator, one executor
 
-1. **Read state before acting.** Run `head -50 agent-docs/STATE.md` and `head -50 agent-docs/PLAN.md` before every task. Never read the full file unless debugging.
-2. **Update state after acting.** Every action must update `agent-docs/STATE.md` (progress, phase, timestamp). Mark completed tasks in `agent-docs/PLAN.md`.
-3. **Atomic commits.** Each logical change = one commit. Format: `<type>: <description>` where type is feat|fix|docs|refactor|test|chore.
-4. **Reference paths, not content.** In state files, write `src/app.ts:42` not the file contents.
-5. **Respect read-only constraints.** `/review` and `/document` do not modify code. `/document` only updates `agent-docs/`.
-6. **Bounded execution.** `/execute` assumes context is complete. Do not research or re-scope. If context is missing, stop and ask.
+Every rule below exists to keep context small and decisions local. Small models degrade fast past ~40k tokens; delegation is the main lever.
+
+## Core Rules (numbered, imperative)
+
+1. **READ** `head -50 agent-docs/STATE.md` and `head -50 agent-docs/PLAN.md` at the start of every task. Do not read the full files.
+2. **NEVER** read a source file unless its path appears in the current task envelope or the user message.
+3. **DELEGATE** codebase exploration to the `explorer` subagent. Do not glob/grep/read broadly yourself.
+4. **DELEGATE** web research to the `learner` subagent. Do not use webfetch/websearch directly.
+5. **ONE** atomic commit per logical change. Format: `<type>: <description>` (types: feat|fix|docs|refactor|test|chore).
+6. **UPDATE** `agent-docs/STATE.md` and `agent-docs/PLAN.md` after every action that changes repo state.
+7. **REFERENCE** files by `path:line`, never paste file contents into state files.
+8. **STOP** immediately when the current task's `stop_when` condition is met. Do not continue into adjacent work.
+9. **ASK** rather than assume when the task envelope is incomplete or ambiguous.
+10. **RESPECT** read-only constraints: `/review` and `/document` never modify code; subagents respect their declared permissions.
+
+## Output Budget
+
+Small models waste context on preamble and recap. Apply:
+
+- No restating the user's request back to them
+- No "I will now..." narration before tool calls
+- Final response ≤ 100 words unless the task genuinely needs more
+- Subagent returns ≤ 40 lines
+- Reasoning stays internal — do not stream it
+
+## Orchestrator / Executor Pattern
+
+This repo uses a **two-model split**. The orchestrator plans and delegates; the executor does the tool calls.
+
+```
+                 ┌─────────────────┐
+   user  ───▶    │  orchestrator   │  (primary agent, small context footprint)
+                 │  plan / oneoff  │
+                 └───┬────────┬────┘
+                     │        │
+         envelope    │        │    envelope
+                     ▼        ▼
+            ┌──────────┐  ┌──────────┐  ┌──────────┐
+            │ explorer │  │ executor │  │ learner  │
+            │ (reads)  │  │ (writes) │  │ (web)    │
+            └──────────┘  └──────────┘  └──────────┘
+              40 lines     commit +       40 lines
+              max back     state update   max back
+```
+
+**Why:** the orchestrator never accumulates file contents, only compressed findings. Two 35B models can sustain a long session this way; one 35B model cannot.
+
+## Task Envelope
+
+Every delegation from orchestrator to a subagent MUST use this envelope:
+
+```markdown
+## Task Envelope
+
+**Goal:** <one sentence, imperative>
+**Files:** `path/a.ts`, `path/b.ts`   # explicit list, no globs
+**Constraints:**
+  - <must/never items>
+**Stop when:** <observable condition — commit made, findings returned, etc.>
+**Return format:** <what orchestrator expects back>
+```
+
+Executors and explorers MUST refuse to act if any field is missing. Ask the orchestrator instead of guessing.
+
+## Agent Roles
+
+| Agent | Mode | Reads | Writes | Web | Commits | Purpose |
+|-------|------|-------|--------|-----|---------|---------|
+| planner | primary | state files only | state files | no | no | Break work into tasks, delegate |
+| executor | subagent | envelope files | envelope files | no | yes | Implement one task |
+| explorer | subagent | any (read-only) | no | no | no | Return compressed code findings |
+| learner | subagent | no | no | yes | no | Return compressed web findings |
+| reviewer | primary | all | state files | no | no | Report issues, never fix |
+| documentor | primary | all | `agent-docs/` only | no | no | Sync state with git reality |
+| oneoff | primary | via subagents | via subagents | via learner | yes | Ad-hoc plan+execute outside workflow |
+| agentfixer | primary | agent files | agent files (ask) | no | yes | Modify agent definitions |
 
 ## State Files
 
-All state files live in `agent-docs/`. Every agent reads and writes here.
-
 ```
-agent-docs/STATE.md      - Phase, focus, blockers, progress
-agent-docs/PLAN.md       - Task breakdown with checkboxes
-agent-docs/CHANGELOG.md  - Change history
+agent-docs/STATE.md      Phase, focus, blockers, progress  (first 50 lines = actionable)
+agent-docs/PLAN.md       Task breakdown with checkboxes    (first 50 lines = active)
+agent-docs/CHANGELOG.md  Change history                    (append-only)
 ```
 
-State files use header/history structure:
-- **First 50 lines**: Actionable state (always read this)
-- **Below `---`**: History (read only when debugging)
+Structure: first 50 lines = actionable state above `---`; history below `---` is debugging-only.
 
-## Commands
+## Commands (all frameworks)
 
-| Command | Purpose | Constraint |
-|---------|---------|------------|
-| `/plan` | Break requirements into tasks | Updates PLAN.md and STATE.md |
-| `/execute` | Implement next task | Bounded: no research, assumes context |
-| `/review` | Review changes | READ-ONLY: report, don't fix |
-| `/document` | Sync state with reality | CODE READ-ONLY: only updates agent-docs/ |
-
-## Workflow
-
-1. Human describes what they want
-2. `/plan` breaks it into tasks in `agent-docs/PLAN.md`
-3. `/execute` implements one task, atomic commit
-4. `/review` checks quality
-5. `/document` syncs state anytime
-
-## Standalone Agents
-
-### OneOff
-
-Ad-hoc planner+executor for tasks outside the formal workflow. Does not update `agent-docs/`.
-
-- Delegates all web research to `@learner` subagent
-- Does NOT use webfetch or web search directly
-- Keeps commits atomic
-
-### Learner (subagent)
-
-Research-only subagent called by other agents via `@learner`. Returns compressed findings (max 40 lines) to conserve caller's context.
-
-- READ-ONLY: no file edits, no bash
-- Returns structured findings with sources
-- Prefers code snippets over prose
-
-### AgentFixer
-
-Meta-agent that modifies agent instruction files across all frameworks (OpenCode, Claude Code, Copilot). Knows exact file locations.
-
-- Prompts for frequently accessed files, URLs, MCP servers, and keywords
-- Applies best practices: YAML frontmatter, permission backstops, imperative rules
-- MUST ask before editing any agent file
-- Delegates research to `learner` when unsure about conventions
+| Command | Role | Constraint |
+|---------|------|------------|
+| `/plan <req>` | planner orchestrates | delegates reads to explorer |
+| `/execute [task]` | planner → executor subagent | bounded; envelope required |
+| `/review` | reviewer | READ-ONLY |
+| `/document` | documentor | CODE READ-ONLY |
 
 ## Commit Format
 
@@ -84,13 +117,15 @@ Task: <task name from plan>
 ## File Structure
 
 ```
-AGENTS.md                   - This file (universal agent instructions)
-CLAUDE.md                   - Claude Code specific instructions
-agents.md                   - Agent reference documentation
-agent-docs/                 - Shared state (all tools read/write)
-.opencode/agents/           - OpenCode agent definitions
-.opencode/commands/         - OpenCode slash commands
-.claude/commands/           - Claude Code slash commands
-.github/prompts/            - Copilot prompt files
-.github/copilot-instructions.md - Copilot instructions
+AGENTS.md                         Universal rules (this file, highest priority)
+CLAUDE.md                         Claude Code specific notes
+agents.md                         Reference documentation
+opencode.json                     OpenCode project config
+agent-docs/                       Shared state (all tools read/write)
+.opencode/agents/                 OpenCode agent definitions
+.opencode/commands/               OpenCode slash commands
+.claude/agents/                   Claude Code subagent definitions
+.claude/commands/                 Claude Code slash commands
+.github/copilot-instructions.md   Copilot rules
+.github/prompts/                  Copilot prompt files
 ```
