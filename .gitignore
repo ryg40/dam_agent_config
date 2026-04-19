@@ -1,0 +1,20 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Python/Node/shell noise that may appear in installer runs
+__pycache__/
+*.pyc
+node_modules/
+.env
+.env.local
+
+# Local-only installer artifacts
+install.log
+*.bak
+*.orig
