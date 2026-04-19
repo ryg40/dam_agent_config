@@ -1,52 +1,17 @@
-# Document
+# /document
 
-Sync docs with reality. **CODE READ-ONLY**: Only updates `agent-docs/`.
+**CODE READ-ONLY.** Only update files in `agent-docs/`.
 
-## Routing
+## Rules
 
-**Use when:**
-- Anytime to sync state
-- After manual changes outside workflow
-- Before handing off to another session
-- Frequently during long sessions
-
-**Skip when:**
-- About to `/execute` (it updates state itself)
-
-## Efficient Reads
-
-Run these in parallel:
-
-```bash
-head -50 agent-docs/STATE.md  # Current state
-head -50 agent-docs/PLAN.md   # Active tasks
-git status                     # Uncommitted
-git log --oneline -5           # Recent commits
-```
-
-## Steps
-
-1. Read STATE.md, PLAN.md, git status, git log in parallel
+1. Run in parallel: `head -50 agent-docs/STATE.md`, `head -50 agent-docs/PLAN.md`, `git status`, `git log --oneline -5`.
 2. Identify drift:
-   - Uncommitted work not in STATE
-   - Completed tasks not marked done
-   - New blockers
-3. Update STATE.md header to match reality
-4. Sync PLAN.md task status
-5. Append to Session Log if significant
+   - Uncommitted work not reflected in STATE
+   - Completed commits not marked Done in PLAN
+   - New blockers or scope changes
+3. Update the header (first 50 lines) of `agent-docs/STATE.md` to match reality.
+4. Sync task checkboxes in `agent-docs/PLAN.md`.
+5. Append a line to `agent-docs/CHANGELOG.md` only for notable changes.
+6. Reference paths, never paste file contents.
 
-## File Path References
-
-In STATE.md, reference paths not content:
-
-```markdown
-## Uncommitted
-- `src/app.ts` (modified) - added auth check
-- `lib/utils.ts` (new) - helper functions
-```
-
-## Output
-
-- STATE.md reflects current reality
-- PLAN.md tasks synced
-- CHANGELOG.md updated (if notable)
+≤ 100 words: summary of drift fixed.

@@ -3,54 +3,18 @@ description: Implement next task with atomic commit
 mode: agent
 ---
 
-# Execute
+# /execute
 
-Implement next task with atomic commit.
+Pick the next task from PLAN.md and implement it under the Task Envelope contract.
 
-## Routing
+## Rules
 
-**Use when:**
-- Plan exists with tasks
-- Task is well-defined with clear scope
-- Ready to implement (not research)
+1. Read `head -50 agent-docs/PLAN.md`. Pick first unchecked (or user-named) task.
+2. Treat the task as a Task Envelope (AGENTS.md): confirm Goal, Files, Constraints, Stop when.
+3. If Files is not explicit, do focused searches — but stop as soon as you have the paths. Do not read broadly.
+4. Read only the files in the envelope. Make the edits.
+5. Commit: `<type>: <description>\n\nTask: <task name>`.
+6. Move task Active → Done in PLAN.md; update STATE.md progress.
+7. If the envelope is incomplete, stop and ask — do not guess.
 
-**Skip when:**
-- No plan exists → `/plan` first
-- Task is unclear → `/plan` to clarify
-- Need to explore codebase → explore first, then `/execute`
-
-## Bounded Execution
-
-This command assumes context is complete. Do not:
-- Research external docs
-- Explore unfamiliar code extensively
-- Plan or re-scope the task
-
-If context is missing, stop and ask.
-
-## Efficient Reads
-
-```bash
-head -50 agent-docs/STATE.md  # Quick context
-head -50 agent-docs/PLAN.md   # Active tasks only
-```
-
-## Steps
-
-1. Read first 50 lines of STATE.md and PLAN.md
-2. Find next unchecked task (or specified task)
-3. Read only the files listed in task
-4. Implement the task
-5. Commit: `<type>: <description>`
-6. Move task to Done, update STATE.md
-
-## Parallel Execution
-
-If task involves multiple independent files, read/edit them in parallel.
-
-## Output
-
-- Code changes
-- One atomic commit
-- PLAN.md task → Done
-- STATE.md progress updated
+Final message ≤ 50 words.

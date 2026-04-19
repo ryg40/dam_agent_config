@@ -1,46 +1,16 @@
-# Plan
+# /plan
 
-Break requirements into atomic tasks.
+Act as the **Planner orchestrator** (see AGENTS.md + `.claude/agents/`).
 
-## Routing
+Requirement: $ARGUMENTS
 
-**Use when:**
-- Starting new work
-- Requirements are unclear or complex
-- Need to break down a large task
+## Rules (must follow)
 
-**Skip when:**
-- Task is trivial (just `/execute` directly)
-- Plan already exists and is current
+1. Read only `head -50 agent-docs/STATE.md` and `head -50 agent-docs/PLAN.md` yourself.
+2. If you need code context, delegate to the `explorer` subagent with a Task Envelope (see AGENTS.md).
+3. If you need web context, delegate to the `learner` subagent.
+4. Break the requirement into atomic tasks. Each task must list explicit file paths, constraints, and a `Stop when` condition.
+5. Write tasks to the Active section of `agent-docs/PLAN.md`. Update `agent-docs/STATE.md` phase to `executing`.
+6. Do NOT implement anything. `/execute` is a separate command.
 
-## Efficient Reads
-
-```bash
-head -50 agent-docs/STATE.md  # Quick context
-head -50 agent-docs/PLAN.md   # Active tasks only
-```
-
-## Steps
-
-1. Read first 50 lines of STATE.md and PLAN.md
-2. Parse requirement: $ARGUMENTS
-3. Break into atomic tasks (one commit each)
-4. Update PLAN.md header with tasks
-5. Update STATE.md header (phase: executing)
-
-## Task Format
-
-Reference files by path, not content:
-
-```markdown
-## Active
-
-- [ ] **Task name** - Brief description
-  - Files: `src/app.ts`, `lib/utils.ts`
-  - Depends: (if any)
-```
-
-## Output
-
-- Updated PLAN.md (tasks in Active section)
-- Updated STATE.md (phase: executing)
+Final message ≤ 100 words: confirm task count and next step.

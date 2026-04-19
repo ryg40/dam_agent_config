@@ -1,4 +1,4 @@
 {
   "$schema": "https://opencode.ai/config.schema.json",
-  "customInstructions": "See AGENTS.md for project rules. Read head -50 agent-docs/STATE.md before every task."
+  "customInstructions": "Read AGENTS.md first for universal rules. Always start with `head -50 agent-docs/STATE.md` and `head -50 agent-docs/PLAN.md`. Delegate code exploration to `explorer`, web research to `learner`, implementation to `execute`. Every delegation uses the Task Envelope format in AGENTS.md."
 }

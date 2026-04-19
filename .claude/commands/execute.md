@@ -1,51 +1,15 @@
-# Execute
+# /execute
 
-Implement next task with atomic commit.
+Act as the **Planner orchestrator** delegating one task to the `executor` subagent.
 
-## Routing
+Task (optional, else pick next unchecked): $ARGUMENTS
 
-**Use when:**
-- Plan exists with tasks
-- Task is well-defined with clear scope
-- Ready to implement (not research)
+## Rules (must follow)
 
-**Skip when:**
-- No plan exists → `/plan` first
-- Task is unclear → `/plan` to clarify
-- Need to explore codebase → explore first, then `/execute`
+1. Read `head -50 agent-docs/PLAN.md`. Pick the task matching `$ARGUMENTS` or the first unchecked one.
+2. Build a Task Envelope (AGENTS.md defines the fields): Goal, Files, Constraints, Stop when, Return format.
+3. If the task lacks explicit files, delegate to `explorer` first to fill them in — do NOT grep/read yourself.
+4. Invoke the `executor` subagent via the Task tool with the full envelope.
+5. On return, confirm the commit landed and the task moved to Done. If the executor returned `ENVELOPE INCOMPLETE`, fix the envelope and retry — do not do the work yourself.
 
-## Bounded Execution
-
-This command assumes context is complete. Do not:
-- Research external docs
-- Explore unfamiliar code extensively
-- Plan or re-scope the task
-
-If context is missing, stop and ask.
-
-## Efficient Reads
-
-```bash
-head -50 agent-docs/STATE.md  # Quick context
-head -50 agent-docs/PLAN.md   # Active tasks only
-```
-
-## Steps
-
-1. Read first 50 lines of STATE.md and PLAN.md
-2. Find next unchecked task (or use: $ARGUMENTS)
-3. Read only the files listed in task
-4. Implement the task
-5. Commit: `<type>: <description>`
-6. Move task to Done, update STATE.md
-
-## Parallel Execution
-
-If task involves multiple independent files, read/edit them in parallel.
-
-## Output
-
-- Code changes
-- One atomic commit
-- PLAN.md task → Done
-- STATE.md progress updated
+Final message ≤ 50 words: commit SHA and progress.

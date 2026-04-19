@@ -1,65 +1,38 @@
 # Copilot Instructions
 
-This repository uses a lightweight, human-driven workflow system.
+Universal agent rules live in [AGENTS.md](../AGENTS.md). Read that first.
 
-## Philosophy
+## Target Runtime
 
-- **Human-driven**: Humans orchestrate, agents assist
-- **Documentation-first**: State is always captured in markdown
-- **Atomic commits**: Each logical change = one commit
-- **Scan and sync**: Run `/document` anytime to capture drift
+This repo's agent configuration is tuned for small local models (30B–122B dense or MoE) served via llama-serve. Copilot is supported but inherits the same delegation-heavy, low-context style.
 
-## Available Commands
+## Rules (short form — see AGENTS.md for full list)
+
+1. Start with `head -50 agent-docs/STATE.md` and `head -50 agent-docs/PLAN.md`.
+2. Delegate code exploration and web research when a sub-agent is available. Otherwise do minimal focused reads.
+3. Every delegation uses the Task Envelope format (Goal, Files, Constraints, Stop when, Return format).
+4. One atomic commit per logical change: `<type>: <description>` (types: feat|fix|docs|refactor|test|chore).
+5. Update `agent-docs/STATE.md` and `agent-docs/PLAN.md` after every state-changing action.
+6. Reference files as `path:line` in state files. Never paste contents.
+
+## Commands
 
 | Command | Purpose |
 |---------|---------|
 | `/plan` | Break requirements into atomic tasks |
-| `/execute` | Implement next task with atomic commit |
-| `/review` | Review current changes |
-| `/document` | Scan diffs, update STATE.md |
+| `/execute` | Implement one task, atomic commit |
+| `/review` | Read-only review of changes |
+| `/document` | Sync state with git reality |
 
 ## State Files
 
-**IMPORTANT**: All state files live in `/agent-docs/` so all agent frameworks can access them.
-
 ```
-agent-docs/
-  STATE.md      - Current phase, in-progress work, blockers
-  PLAN.md       - Task breakdown with checkboxes
-  CHANGELOG.md  - Human-readable change log
+agent-docs/STATE.md      First 50 lines = actionable; below `---` = history
+agent-docs/PLAN.md       First 50 lines = active tasks; below `---` = done
+agent-docs/CHANGELOG.md  Append-only
 ```
 
-**Every command must update `/agent-docs/` after every action.**
+## Output Budget
 
-### Efficient Reads
-
-State files use a **header/history** structure:
-- **First 50 lines**: Actionable state (read this for quick context)
-- **Below the `---`**: History/logs (read only when debugging)
-
-```bash
-head -50 agent-docs/STATE.md  # Quick context
-head -50 agent-docs/PLAN.md   # Active tasks
-```
-
-## Commit Style
-
-Use atomic commits with this format:
-
-```
-<type>: <description>
-
-Task: <task name from plan>
-```
-
-Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
-
-## Workflow
-
-1. User describes what they want
-2. `/plan` breaks it into tasks
-3. `/execute` implements one task at a time
-4. `/review` checks quality
-5. `/document` syncs state anytime
-
-Run `/document` frequently to keep STATE.md accurate.
+- Final messages ≤ 100 words unless the task needs more
+- No preamble, no restating the request, no narration before tool calls

@@ -1,51 +1,19 @@
 ---
-description: Break requirements into atomic tasks
+description: Plan requirements into atomic tasks (orchestrator)
 mode: agent
 ---
 
-# Plan
+# /plan
 
-Break requirements into atomic tasks.
+Act as the Planner orchestrator (see AGENTS.md).
 
-## Routing
+## Rules
 
-**Use when:**
-- Starting new work
-- Requirements are unclear or complex
-- Need to break down a large task
+1. Read only `head -50 agent-docs/STATE.md` and `head -50 agent-docs/PLAN.md`.
+2. Delegate code exploration to a read-only sub-agent with a Task Envelope (Goal, Files, Constraints, Stop when, Return format — see AGENTS.md). If Copilot cannot spawn subagents, do focused reads yourself but stay under 40 lines per file.
+3. Delegate web research to a research helper the same way.
+4. Break the requirement into atomic tasks. Each task lists explicit Files, Constraints, Stop when.
+5. Write tasks to `agent-docs/PLAN.md` Active; update `agent-docs/STATE.md` phase to `executing`.
+6. Do NOT implement — `/execute` handles that.
 
-**Skip when:**
-- Task is trivial (just `/execute` directly)
-- Plan already exists and is current
-
-## Efficient Reads
-
-```bash
-head -50 agent-docs/STATE.md  # Quick context
-head -50 agent-docs/PLAN.md   # Active tasks only
-```
-
-## Steps
-
-1. Read first 50 lines of STATE.md and PLAN.md
-2. Parse requirement from user
-3. Break into atomic tasks (one commit each)
-4. Update PLAN.md header with tasks
-5. Update STATE.md header (phase: executing)
-
-## Task Format
-
-Reference files by path, not content:
-
-```markdown
-## Active
-
-- [ ] **Task name** - Brief description
-  - Files: `src/app.ts`, `lib/utils.ts`
-  - Depends: (if any)
-```
-
-## Output
-
-- Updated PLAN.md (tasks in Active section)
-- Updated STATE.md (phase: executing)
+Final message ≤ 100 words.
