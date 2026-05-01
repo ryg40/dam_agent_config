@@ -14,7 +14,12 @@ End-of-day cron job to extract structured notes from daily log.
 #!/bin/bash
 set -euo pipefail
 
-VAULT="$HOME/.obsidian/Obsidian Vault"
+# Load local configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/obsidian-config.sh"
+check_config
+
+VAULT="$OBSIDIAN_VAULT"
 TODAY=$(date +%Y-%m-%d)
 DAILY_NOTE="10-daily/$(date +%Y)/$(date +%m)/${TODAY}.md"
 
@@ -49,7 +54,7 @@ fi
 #     case "decision":
 #       path = "20-projects/${item.project}/decisions/${TODAY}-${slug(item.title)}.md"
 #   
-#   if [ "$item.confidence" = "low" ]; then
+#   if [ "$item.confidence" -lt "$CONFIDENCE_THRESHOLD" ]; then
 #     path = "00-inbox/${slug(item.title)}.md"
 #   fi
 #   
@@ -63,10 +68,12 @@ fi
 echo "Checking for unresolved links..."
 obsidian unresolved
 
-# 5. Git commit
-cd "$VAULT"
-git add -A
-git commit -m "Daily rollup: $TODAY" || true
+# 5. Git commit (if enabled)
+if [ "$GIT_AUTO_COMMIT" = "true" ]; then
+  cd "$VAULT"
+  git add -A
+  git commit -m "${GIT_COMMIT_PREFIX} Daily rollup: $TODAY" || true
+fi
 ```
 
 ## Extraction Schema
@@ -76,13 +83,14 @@ The extraction model should return:
 ```json
 [
   {
-    "type": "concept|snippet|decision",
+    "type": "concept|snippet|decision|todo",
     "title": "Note title",
     "project": "project-name or null",
     "tags": ["tag1", "tag2"],
     "content": "Note content in markdown",
     "session_id": "opc-2026-04-30-001",
-    "confidence": "high|medium|low"
+    "confidence": 8,
+    "priority": 7
   }
 ]
 ```
@@ -91,5 +99,5 @@ The extraction model should return:
 
 - NEVER delete from `10-daily/` (immutable)
 - NEVER edit notes older than 7 days
-- Low-confidence items → `00-inbox/`
-- Git commit after rollup for backup
+- Low-confidence items (< `$CONFIDENCE_THRESHOLD`) → `00-inbox/`
+- Git commit after rollup (if `git.auto_commit: true`)

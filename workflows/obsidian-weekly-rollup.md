@@ -14,7 +14,12 @@ Sunday cron job to generate weekly summary note.
 #!/bin/bash
 set -euo pipefail
 
-VAULT="$HOME/.obsidian/Obsidian Vault"
+# Load local configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/obsidian-config.sh"
+check_config
+
+VAULT="$OBSIDIAN_VAULT"
 YEAR=$(date +%Y)
 MONTH=$(date +%m)
 WEEK=$(date +%V)
@@ -76,6 +81,24 @@ SORT length(file.inlinks) DESC
 LIMIT 5
 \`\`\`
 
+## High Priority Todos
+
+\`\`\`dataview
+TABLE project, priority, due, status
+FROM "20-projects"
+WHERE type = "todo" AND status != "done" AND priority >= 7
+SORT priority DESC
+\`\`\`
+
+## Blocked Todos
+
+\`\`\`dataview
+TABLE project, blocked_by, priority
+FROM "20-projects"
+WHERE type = "todo" AND status = "blocked"
+SORT priority DESC
+\`\`\`
+
 ## Review Queue
 
 - [ ] Review low-confidence notes in 00-inbox/
@@ -99,10 +122,12 @@ echo ""
 echo "Tags with <3 uses:"
 obsidian tags counts sort=count | head -20
 
-# Git commit
-cd "$VAULT"
-git add -A
-git commit -m "Weekly rollup: ${YEAR}-W${WEEK}" || true
+# Git commit (if enabled)
+if [ "$GIT_AUTO_COMMIT" = "true" ]; then
+  cd "$VAULT"
+  git add -A
+  git commit -m "${GIT_COMMIT_PREFIX} Weekly rollup: ${YEAR}-W${WEEK}" || true
+fi
 
 rm /tmp/weekly-rollup.md
 ```
@@ -115,7 +140,9 @@ Creates `10-daily/YYYY/MM/YYYY-WNN.md` with:
 2. **Decisions Made** — Project decisions from the week
 3. **Snippets Added** — New code snippets
 4. **Concepts with Backlinks** — Notes gaining traction
-5. **Review Queue** — Hygiene tasks
+5. **High Priority Todos** — Priority 7-10 todos
+6. **Blocked Todos** — Todos waiting on dependencies
+7. **Review Queue** — Hygiene tasks
 
 ## Hygiene Checks
 

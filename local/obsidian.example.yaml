@@ -1,0 +1,47 @@
+# Obsidian Local Configuration
+# Copy to: local/obsidian.yaml
+# This file is gitignored - your settings won't be committed
+
+# Vault location (required)
+vault_path: ~/.obsidian/Obsidian Vault
+
+# Session ID prefix (default: opc)
+session_prefix: opc
+
+# Default confidence for agent-generated notes (1-10)
+default_confidence: 7
+
+# Default priority for new todos (1-10)
+default_priority: 5
+
+# Inbox behavior
+inbox:
+  # Confidence threshold - notes below this go to 00-inbox/
+  confidence_threshold: 5
+  # Auto-review reminder (days)
+  review_reminder_days: 7
+
+# Git integration
+git:
+  # Auto-commit after rollup scripts
+  auto_commit: true
+  # Commit message prefix
+  commit_prefix: "vault:"
+
+# MCP server (if using mcpvault)
+mcp:
+  enabled: false
+  # server_url: http://localhost:3000
+
+# Dataview settings
+dataview:
+  # Max results for queries
+  max_results: 50
+  # Default sort field
+  default_sort: created
+
+# Tag defaults
+tags:
+  # Always include these tags on agent notes
+  auto_tags: []
+  # Example: auto_tags: [agent-generated, needs-review]

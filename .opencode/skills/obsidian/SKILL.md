@@ -2,11 +2,29 @@
 
 Interact with Obsidian vaults via the official CLI. Requires Obsidian v1.12+ running.
 
+## Local Configuration
+
+**Always check for local config first:**
+
+```bash
+# Load local config (if exists)
+source scripts/obsidian-config.sh
+
+# Use $OBSIDIAN_VAULT instead of hardcoded path
+cd "$OBSIDIAN_VAULT"
+```
+
+Config file: `local/obsidian.yaml` (gitignored, user-specific)
+
+Run `./install.sh` to initialize local config.
+
 ## Vault Location
 
-Default vault: `~/.obsidian/Obsidian Vault`
+Read from `local/obsidian.yaml` → `vault_path`
 
-Override with `vault="Name"` as first parameter.
+Fallback: `~/.obsidian/Obsidian Vault`
+
+Override per-command with `vault="Name"` parameter.
 
 ## Command Reference
 

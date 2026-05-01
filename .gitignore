@@ -1,0 +1,20 @@
+# Local configuration (user-specific, not committed)
+local/*
+!local/.gitkeep
+!local/*.example.yaml
+!local/README.md
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.tmp
+*.log
