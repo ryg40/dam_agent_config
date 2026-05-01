@@ -81,7 +81,7 @@ Vault location: `~/.obsidian/Obsidian Vault`
 
 1. **NEVER delete from `10-daily/`** — Daily notes are immutable session records
 2. **NEVER edit notes older than 7 days** without explicit user instruction
-3. **Low-confidence extractions go to `00-inbox/`** — Human reviews before filing
+3. **Low-confidence (1-4) extractions go to `00-inbox/`** — Human reviews before filing
 4. **Use Obsidian CLI for writes** — Keeps metadata cache consistent (`obsidian create`, `obsidian property:set`)
 5. **Always set `source: agent`** on notes you create
 6. **Include `session_id` and `source_daily`** for traceability
@@ -101,6 +101,7 @@ Vault location: `~/.obsidian/Obsidian Vault`
 | `concept` | `40-resources/concepts/` or `20-projects/*/concepts/` | Atomic knowledge worth keeping |
 | `snippet` | `40-resources/snippets/` or `20-projects/*/snippets/` | Reusable code/config |
 | `decision` | `20-projects/*/decisions/` | ADR-style decision record |
+| `todo` | `20-projects/*/todos/` | Task with priority (1-10) and project linkage |
 
 ### Session Logging
 
@@ -111,7 +112,7 @@ Append session summaries to daily note using this format:
 
 - **summary**: <one-line summary>
 - **tags**: #tag1 #tag2
-- **confidence**: high|medium|low
+- **confidence**: 1-10 (10 = highest)
 
 ### Artifacts
 <code snippets created>

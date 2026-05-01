@@ -18,6 +18,15 @@ Self-hosted inference stack on Proxmox:
 - **Frontend**: llama-swap for model switching
 - **Proxy**: Caddy reverse proxy with SSL
 
+## Todos
+
+```dataview
+TABLE priority, status, due, blocked_by
+FROM "20-projects/homelab-inference/todos"
+WHERE type = "todo" AND status != "done"
+SORT priority DESC
+```
+
 ## Active Work
 
 ```dataview

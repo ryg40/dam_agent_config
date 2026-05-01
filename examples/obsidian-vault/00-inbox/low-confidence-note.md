@@ -7,7 +7,7 @@ status: draft
 source: agent
 session_id: opc-2026-04-30-003
 source_daily: "[[2026-04-30]]"
-confidence: low
+confidence: 3
 ---
 
 # MCP Server Comparison (Needs Review)

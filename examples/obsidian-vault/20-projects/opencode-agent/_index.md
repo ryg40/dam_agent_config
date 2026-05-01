@@ -18,6 +18,15 @@ Lightweight, human-driven workflow system for AI coding agents. Configuration an
 - **Claude Code**: `.claude/commands/`
 - **Copilot Chat**: `.github/prompts/`
 
+## Todos
+
+```dataview
+TABLE priority, status, due
+FROM "20-projects/opencode-agent/todos"
+WHERE type = "todo" AND status != "done"
+SORT priority DESC
+```
+
 ## Active Work
 
 ```dataview

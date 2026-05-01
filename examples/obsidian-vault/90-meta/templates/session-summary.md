@@ -8,7 +8,7 @@ tags: [template]
 
 - **summary**: <%= tp.system.prompt("Brief summary") %>
 - **tags**: #<%= tp.system.prompt("Tags (space-separated)").split(" ").join(" #") %>
-- **confidence**: <%= tp.system.suggester(["high", "medium", "low"], ["high", "medium", "low"]) %>
+- **confidence**: <%= tp.system.suggester(["10", "9", "8", "7", "6", "5", "4", "3", "2", "1"], [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]) %>
 
 ### Artifacts
 

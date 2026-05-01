@@ -8,7 +8,7 @@ status: active
 source: agent
 session_id: opc-2026-04-30-002
 source_daily: "[[2026-04-30]]"
-confidence: high
+confidence: 9
 ---
 
 # vLLM Launch Command with Tensor Parallelism
