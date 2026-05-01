@@ -2,6 +2,12 @@
 
 This directory contains user-specific configuration that is **not committed to git**.
 
+## Standard Vault Location
+
+All users share the same vault path: `~/.obsidian/Obsidian Vault`
+
+This is intentional — the vault structure, schemas, and workflows assume a single shared location.
+
 ## Setup
 
 Run the install script from the repository root:
@@ -16,21 +22,21 @@ Or manually copy the example files:
 cp local/obsidian.example.yaml local/obsidian.yaml
 ```
 
-Then edit `local/obsidian.yaml` with your settings.
+Then edit `local/obsidian.yaml` with your preferences (session prefix, thresholds, etc.).
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `obsidian.yaml` | Your Obsidian vault settings (gitignored) |
+| `obsidian.yaml` | Your preferences (gitignored) |
 | `obsidian.example.yaml` | Template showing all options |
 
 ## Key Settings
 
-### Vault Path
+### Vault Path (Standard)
 
 ```yaml
-vault_path: ~/Documents/MyVault
+vault_path: ~/.obsidian/Obsidian Vault  # Don't change unless necessary
 ```
 
 ### Confidence Threshold

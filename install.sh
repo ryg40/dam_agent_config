@@ -25,25 +25,16 @@ if [ -f "$LOCAL_DIR/obsidian.yaml" ]; then
     fi
 fi
 
-# Get vault path
-echo -e "${BLUE}Obsidian Vault Configuration${NC}"
+# Standard vault path (single shared location)
+VAULT_PATH="$HOME/.obsidian/Obsidian Vault"
+echo -e "${BLUE}Vault location:${NC} $VAULT_PATH"
 echo ""
-DEFAULT_VAULT="$HOME/.obsidian/Obsidian Vault"
-read -p "Vault path [$DEFAULT_VAULT]: " VAULT_PATH
-VAULT_PATH="${VAULT_PATH:-$DEFAULT_VAULT}"
 
-# Expand ~ to $HOME
-VAULT_PATH="${VAULT_PATH/#\~/$HOME}"
-
-# Validate vault path exists or offer to create
+# Create vault directory if needed
 if [ ! -d "$VAULT_PATH" ]; then
-    echo -e "${YELLOW}Vault directory does not exist: $VAULT_PATH${NC}"
-    read -p "Create it? (Y/n): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-        mkdir -p "$VAULT_PATH"
-        echo -e "${GREEN}Created vault directory.${NC}"
-    fi
+    echo -e "${YELLOW}Creating vault directory...${NC}"
+    mkdir -p "$VAULT_PATH"
+    echo -e "${GREEN}Created.${NC}"
 fi
 
 # Get session prefix

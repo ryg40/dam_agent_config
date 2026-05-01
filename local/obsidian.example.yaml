@@ -2,7 +2,7 @@
 # Copy to: local/obsidian.yaml
 # This file is gitignored - your settings won't be committed
 
-# Vault location (required)
+# Vault location (standard path - rarely needs changing)
 vault_path: ~/.obsidian/Obsidian Vault
 
 # Session ID prefix (default: opc)
