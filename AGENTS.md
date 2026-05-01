@@ -73,6 +73,56 @@ Meta-agent that modifies agent instruction files across all frameworks (OpenCode
 - MUST ask before editing any agent file
 - Delegates research to `learner` when unsure about conventions
 
+## Obsidian Vault Integration
+
+Vault location: `~/.obsidian/Obsidian Vault`
+
+### Guardrails
+
+1. **NEVER delete from `10-daily/`** — Daily notes are immutable session records
+2. **NEVER edit notes older than 7 days** without explicit user instruction
+3. **Low-confidence extractions go to `00-inbox/`** — Human reviews before filing
+4. **Use Obsidian CLI for writes** — Keeps metadata cache consistent (`obsidian create`, `obsidian property:set`)
+5. **Always set `source: agent`** on notes you create
+6. **Include `session_id` and `source_daily`** for traceability
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/note` | Store extracted knowledge to vault |
+| `/daily` | Read/append to daily note |
+| `/vault` | Search and query vault |
+
+### Note Types
+
+| Type | Location | When to use |
+|------|----------|-------------|
+| `concept` | `40-resources/concepts/` or `20-projects/*/concepts/` | Atomic knowledge worth keeping |
+| `snippet` | `40-resources/snippets/` or `20-projects/*/snippets/` | Reusable code/config |
+| `decision` | `20-projects/*/decisions/` | ADR-style decision record |
+
+### Session Logging
+
+Append session summaries to daily note using this format:
+
+```markdown
+## Session <session-id> — <project>
+
+- **summary**: <one-line summary>
+- **tags**: #tag1 #tag2
+- **confidence**: high|medium|low
+
+### Artifacts
+<code snippets created>
+
+### Decisions
+<decisions made>
+
+### Learnings
+<concepts worth extracting>
+```
+
 ## Commit Format
 
 ```
