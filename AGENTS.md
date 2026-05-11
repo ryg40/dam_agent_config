@@ -4,11 +4,22 @@ Universal instructions for all AI coding agents in this repo (Claude Code, OpenC
 
 ## Target Runtime
 
-This config is tuned for **small local models** served via llama-serve:
+This config is tuned for **small local models** served via llama-server and vLLM:
 
 - Dense: Gemma4-31B, Qwen3.5-27B (Q8, ~120k ctx)
 - MoE: Qwen3.6-35B-A3B, Qwen3.5-122B-A10B (Q8, ~120k ctx)
 - Typically **two models loaded simultaneously** — one orchestrator, one executor
+
+Reference docker-compose stacks live in [`configs/`](configs/):
+
+| Stack | Slot | Path |
+|-------|------|------|
+| llama-server (via llama-swap) | orchestrator | [`configs/llama-server/`](configs/llama-server/) |
+| vLLM | executor | [`configs/vllm/`](configs/vllm/) |
+
+All sensitive values (e.g. `HF_TOKEN`) load from per-stack `.env` files that are
+gitignored. See `.env.example` in each directory. Never inline tokens in
+`docker-compose.yml` or commit messages.
 
 Every rule below exists to keep context small and decisions local. Small models degrade fast past ~40k tokens; delegation is the main lever.
 
@@ -122,6 +133,9 @@ CLAUDE.md                         Claude Code specific notes
 agents.md                         Reference documentation
 opencode.json                     OpenCode project config
 agent-docs/                       Shared state (all tools read/write)
+configs/                          Reference docker-compose stacks for the model servers
+configs/llama-server/             llama-swap + llama-server (orchestrator slot)
+configs/vllm/                     vLLM (executor slot)
 .opencode/agents/                 OpenCode agent definitions
 .opencode/commands/               OpenCode slash commands
 .claude/agents/                   Claude Code subagent definitions

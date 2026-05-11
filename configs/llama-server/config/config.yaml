@@ -1,0 +1,60 @@
+#/opt/stacks/llama-swap/config/config.yaml
+healthCheckTimeout: 1500 # wait 25 minutes before unhealthy
+
+macros:
+  # Example of a multi-line macro
+  "latest-llama": >
+    /root/llama.cpp/build/bin/llama-server
+    --port 9876
+
+  "default_ctx": 4096
+
+  # Example of macro-in-macro usage. macros can contain other macros
+  # but they must be previously declared.
+  "default_args": "--ctx-size ${default_ctx}"
+
+# models: a dictionary of model configurations
+# - required
+# - each key is the model's ID, used in API requests
+# - model settings have default values that are used if they are not defined here
+# - the model's ID is available in the ${MODEL_ID} macro, also available in macros defined above
+# - below are examples of the all the settings a model can have
+models:
+  Qwen3.6-35B-Q8:
+    proxy: http://localhost:9876
+    cmd: >
+      /root/llama.cpp/build/bin/llama-server --model /data/Qwen_Qwen3.6-35B-A3B-Q8_0.gguf
+      -fa on
+      --ctx-size 140000
+      --port 9876
+      --temp 0.6
+      --top-p 0.95
+      --min-p 0.00
+      --top-k 20
+      --threads 16
+      --presence-penalty 0.0
+      --repeat-penalty 1.0
+      --batch-size 4096
+      --ubatch-size 4096
+      --reasoning-format auto
+      --jinja
+  Qwen3.6-35B-Apex-Bal:
+    proxy: http://localhost:9876
+    cmd: >
+      /root/llama.cpp/build/bin/llama-server --model /data/Qwen3.6-35B-A3B-APEX-I-Balanced.gguf
+      -ctxcp 2
+      -fa on
+      --ctx-size 172000
+      --fit on
+      --port 9876
+      --temp 0.6
+      --top-p 0.95
+      --min-p 0.00
+      --top-k 20
+      --threads 16
+      --presence-penalty 0.0
+      --repeat-penalty 1.0
+      --batch-size 4096
+      --ubatch-size 4096
+      --reasoning-format auto
+      --jinja

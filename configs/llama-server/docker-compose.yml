@@ -1,0 +1,43 @@
+services:
+  llama-swap:
+    container_name: llama-swap-fast
+    image: ghcr.io/mostlygeek/llama-swap:cuda  # Change this to vulkan, cpu etc.
+    ports:
+      - 9292:8080
+    restart: unless-stopped
+    env_file:
+      - .env
+    # environment: null # - CUDA_VISIBLE_DEVICES=0,3 # ADD THIS - Only use GPUs 1 and 2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities:
+                - gpu
+              device_ids:
+                - "0,3"
+              driver: nvidia
+    volumes:
+      - ${HF_CACHE_DIR:-/root/hf}:/root/hf:ro
+      - ${LLAMA_CPP_DIR:-/root/llama.cpp}:/root/llama.cpp:ro
+      - /data:/data
+      - ./config:/config
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    entrypoint: /app/llama-swap -config /config/config.yaml
+    healthcheck:
+      test:
+        - CMD
+        - test
+        - -f
+        - /app/config.yaml
+        # Simple check if file exists
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    networks:
+      llama-vllm-shared:
+        ipv4_address: 172.30.0.20
+networks:
+  llama-vllm-shared:
+    external: true

@@ -4,7 +4,15 @@ Claude Code specific notes. Universal rules for all agents live in [AGENTS.md](A
 
 ## Target Runtime
 
-This repo's agent configuration is tuned for **small local models** served via llama-serve (typical pairing: two ~35B models loaded at Q8 with ~120k context). See AGENTS.md "Target Runtime" for the full list.
+This repo's agent configuration is tuned for **small local models** served via
+llama-server and vLLM (typical pairing: two ~35B models loaded at Q8 with ~120k
+context). See AGENTS.md "Target Runtime" for the full list and
+[`configs/`](configs/) for reference docker-compose stacks (`configs/llama-server/`
+for the orchestrator slot, `configs/vllm/` for the executor slot).
+
+Tokens (`HF_TOKEN`, etc.) load from per-stack `.env` files that are gitignored.
+Never paste a real token into chat or a commit — rotate any token that has been
+exposed.
 
 Claude Code is supported too, but the defaults (short responses, aggressive delegation, tight envelopes) are calibrated for the local-model case. Claude Code will naturally be within budget.
 
@@ -26,6 +34,8 @@ CLAUDE.md                         This file
 agents.md                         Reference documentation
 opencode.json                     OpenCode project config
 agent-docs/                       Shared state
+configs/llama-server/             llama-swap + llama-server compose (orchestrator)
+configs/vllm/                     vLLM compose (executor)
 .claude/agents/                   Subagent definitions (Claude Code)
 .claude/commands/                 Slash commands (Claude Code)
 .opencode/agents/                 Agent definitions (OpenCode)
