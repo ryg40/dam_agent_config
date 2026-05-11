@@ -16,7 +16,17 @@ node_modules/
 configs/**/.env
 configs/**/.env.local
 
+# Local configuration (user-specific, not committed) — Obsidian installer
+local/*
+!local/.gitkeep
+!local/*.example.yaml
+!local/README.md
+
 # Local-only installer artifacts
 install.log
 *.bak
 *.orig
+
+# Temporary
+*.tmp
+*.log

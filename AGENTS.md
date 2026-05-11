@@ -117,6 +117,57 @@ Structure: first 50 lines = actionable state above `---`; history below `---` is
 | `/review` | reviewer | READ-ONLY |
 | `/document` | documentor | CODE READ-ONLY |
 
+## Obsidian Vault Integration
+
+Vault location: `~/.obsidian/Obsidian Vault`
+
+### Guardrails
+
+1. **NEVER delete from `10-daily/`** — Daily notes are immutable session records
+2. **NEVER edit notes older than 7 days** without explicit user instruction
+3. **Low-confidence (1-4) extractions go to `00-inbox/`** — Human reviews before filing
+4. **Use Obsidian CLI for writes** — Keeps metadata cache consistent (`obsidian create`, `obsidian property:set`)
+5. **Always set `source: agent`** on notes you create
+6. **Include `session_id` and `source_daily`** for traceability
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/note` | Store extracted knowledge to vault |
+| `/daily` | Read/append to daily note |
+| `/vault` | Search and query vault |
+
+### Note Types
+
+| Type | Location | When to use |
+|------|----------|-------------|
+| `concept` | `40-resources/concepts/` or `20-projects/*/concepts/` | Atomic knowledge worth keeping |
+| `snippet` | `40-resources/snippets/` or `20-projects/*/snippets/` | Reusable code/config |
+| `decision` | `20-projects/*/decisions/` | ADR-style decision record |
+| `todo` | `20-projects/*/todos/` | Task with priority (1-10) and project linkage |
+
+### Session Logging
+
+Append session summaries to daily note using this format:
+
+```markdown
+## Session <session-id> — <project>
+
+- **summary**: <one-line summary>
+- **tags**: #tag1 #tag2
+- **confidence**: 1-10 (10 = highest)
+
+### Artifacts
+<code snippets created>
+
+### Decisions
+<decisions made>
+
+### Learnings
+<concepts worth extracting>
+```
+
 ## Commit Format
 
 ```
